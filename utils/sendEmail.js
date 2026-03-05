@@ -1,68 +1,39 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 const sendEmail = async ({ to, name, service, date, time }) => {
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-  const mailOptions = {
-    from: `"Booking System" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: "onboarding@resend.dev",
     to,
     subject: "Your Booking is Confirmed! ✅",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #f9f9f9;">
-        
-        <div style="background: #fff; border-radius: 12px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-          
-          <h1 style="color: #1a1a2e; font-size: 24px; margin-bottom: 8px;">
-            Booking Confirmed! 🎉
-          </h1>
-          
-          <p style="color: #666; font-size: 16px; margin-bottom: 32px;">
-            Hi <strong>${name}</strong>, your appointment has been successfully booked.
-          </p>
-
-          <div style="background: #f0f4ff; border-radius: 10px; padding: 24px; margin-bottom: 32px;">
-            <h3 style="color: #1a1a2e; margin-bottom: 16px; font-size: 16px;">Booking Details</h3>
-            
-            <table style="width: 100%; border-collapse: collapse;">
+        <div style="background: #fff; border-radius: 12px; padding: 40px;">
+          <h1 style="color: #1a1a2e;">Booking Confirmed! 🎉</h1>
+          <p style="color: #666;">Hi <strong>${name}</strong>, your appointment has been successfully booked.</p>
+          <div style="background: #f0f4ff; border-radius: 10px; padding: 24px; margin: 24px 0;">
+            <h3 style="color: #1a1a2e;">Booking Details</h3>
+            <table style="width: 100%;">
               <tr>
-                <td style="padding: 8px 0; color: #888; font-size: 14px; width: 40%;">Service</td>
-                <td style="padding: 8px 0; color: #1a1a2e; font-weight: 600; font-size: 14px;">${service}</td>
+                <td style="color: #888; padding: 8px 0;">Service</td>
+                <td style="font-weight: 600; color: #1a1a2e;">${service}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #888; font-size: 14px;">Date</td>
-                <td style="padding: 8px 0; color: #1a1a2e; font-weight: 600; font-size: 14px;">${date}</td>
+                <td style="color: #888; padding: 8px 0;">Date</td>
+                <td style="font-weight: 600; color: #1a1a2e;">${date}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #888; font-size: 14px;">Time</td>
-                <td style="padding: 8px 0; color: #1a1a2e; font-weight: 600; font-size: 14px;">${time}</td>
+                <td style="color: #888; padding: 8px 0;">Time</td>
+                <td style="font-weight: 600; color: #1a1a2e;">${time}</td>
               </tr>
             </table>
           </div>
-
-          <p style="color: #666; font-size: 14px; line-height: 1.6;">
-            If you need to reschedule or cancel, please contact us as soon as possible.
-          </p>
-
-          <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
-
-          <p style="color: #aaa; font-size: 12px; text-align: center;">
-            This is an automated confirmation email. Please do not reply.
-          </p>
-
+          <p style="color: #666; font-size: 14px;">If you need to reschedule or cancel, please contact us.</p>
         </div>
       </div>
     `,
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 };
 
 module.exports = sendEmail;
